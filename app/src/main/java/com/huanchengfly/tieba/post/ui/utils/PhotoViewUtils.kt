@@ -6,9 +6,31 @@ import com.huanchengfly.tieba.post.api.models.protos.ThreadInfo
 import com.huanchengfly.tieba.post.models.LoadPicPageData
 import com.huanchengfly.tieba.post.models.PhotoViewData
 import com.huanchengfly.tieba.post.models.PicItem
+import com.huanchengfly.tieba.post.ui.common.PicContentRender
 import com.huanchengfly.tieba.post.utils.ImageUtil
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+
+fun getSubPostPhotoViewData(
+    subPostId: Long,
+    picRenders: List<PicContentRender>,
+    index: Int
+): PhotoViewData =
+    PhotoViewData(
+        data = null,
+        picItems = picRenders.mapIndexed { picIndex, pic ->
+            PicItem(
+                picId = pic.picId,
+                picIndex = picIndex + 1,
+                url = pic.picUrl,
+                originUrl = pic.originUrl.ifBlank { pic.picUrl },
+                showOriginBtn = pic.showOriginBtn,
+                originSize = pic.originSize,
+                postId = subPostId
+            )
+        }.toImmutableList(),
+        index = index
+    )
 
 fun getPhotoViewData(
     post: Post,

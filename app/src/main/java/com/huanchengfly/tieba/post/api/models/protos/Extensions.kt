@@ -20,6 +20,7 @@ import com.huanchengfly.tieba.post.ui.common.VoiceContentRender
 import com.huanchengfly.tieba.post.ui.common.theme.utils.ThemeUtils
 import com.huanchengfly.tieba.post.ui.page.thread.SubPostItemData
 import com.huanchengfly.tieba.post.ui.utils.getPhotoViewData
+import com.huanchengfly.tieba.post.ui.utils.getSubPostPhotoViewData
 import com.huanchengfly.tieba.post.utils.EmoticonManager
 import com.huanchengfly.tieba.post.utils.EmoticonUtil.emoticonString
 import com.huanchengfly.tieba.post.utils.ImageUtil
@@ -373,6 +374,27 @@ val Post.contentRenders: ImmutableList<PbContentRender>
                     )
                 )
             } else it
+        }.toImmutableList()
+    }
+
+val SubPostList.contentRenders: ImmutableList<PbContentRender>
+    get() {
+        val renders = content.renders
+        val picRenders = renders.filterIsInstance<PicContentRender>()
+        if (picRenders.isEmpty()) return renders
+
+        var picIndex = -1
+        return renders.map { render ->
+            if (render is PicContentRender) {
+                picIndex++
+                render.copy(
+                    photoViewData = getSubPostPhotoViewData(
+                        id,
+                        picRenders,
+                        picIndex
+                    )
+                )
+            } else render
         }.toImmutableList()
     }
 
